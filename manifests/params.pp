@@ -5,23 +5,6 @@
 class rabbitmq::params {
 
   case $::osfamily {
-    'Archlinux': {
-      $package_ensure   = 'installed'
-      $package_name     = 'rabbitmq'
-      $service_name     = 'rabbitmq'
-      $package_source   = ''
-      $version          = '3.1.3-1'
-      $base_version     = regsubst($version,'^(.*)-\d$','\1')
-      # This must remain at the end as we need $base_version and $version defined first
-    }
-    'Debian': {
-      $package_ensure   = 'installed'
-      $package_name     = 'rabbitmq-server'
-      $service_name     = 'rabbitmq-server'
-      $package_provider = 'apt'
-      $package_source   = ''
-      $version          = '3.1.5'
-    }
     'RedHat', 'SUSE': {
       $package_ensure   = 'installed'
       $package_name     = 'rabbitmq-server'
@@ -71,10 +54,10 @@ class rabbitmq::params {
   $ssl_management_port        = '5671'
   $ssl_stomp_port             = '6164'
   $ssl_verify                 = 'verify_none'
-  $ssl_fail_if_no_peer_cert   = 'false'
+  $ssl_fail_if_no_peer_cert   = false
   $ldap_auth                  = false
   $ldap_server                = 'ldap'
-  $ldap_user_dn_pattern       = 'cn=${username},ou=People,dc=example,dc=com'
+  $ldap_user_dn_pattern       = "cn=${::username},ou=People,dc=example,dc=com"
   $ldap_use_ssl               = false
   $ldap_port                  = '389'
   $ldap_log                   = false

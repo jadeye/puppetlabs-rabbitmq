@@ -10,41 +10,6 @@ describe 'rabbitmq' do
     end
   end
 
-  context 'on Debian' do
-    let(:facts) {{ :osfamily => 'Debian', :lsbdistcodename => 'squeeze' }}
-    it 'includes rabbitmq::repo::apt' do
-      should contain_class('rabbitmq::repo::apt')
-    end
-
-    describe 'apt::source default values' do
-      let(:facts) {{ :osfamily => 'Debian' }}
-      it 'should add a repo with defaults values' do
-        contain_file('/etc/apt/sources.list.d/rabbitmq.list')\
-          .with_content(/deb http\:\/\/www\.rabbitmq.com\/debian\/ testing main/)
-      end
-    end
-
-    describe 'apt::source custom values' do
-      let(:params) {
-        { :location => 'http://www.foorepo.com/debian',
-          :release => 'unstable',
-          :repos => 'main'
-        }}
-      it 'should add a repo with custom new values' do
-        contain_file('/etc/apt/sources.list.d/rabbitmq.list')\
-          .with_content(/deb http\:\/\/www\.foorepo.com\/debian\/ unstable main/)
-      end
-    end
-  end
-
-  context 'on Debian' do
-    let(:params) {{ :manage_repos => false }}
-    let(:facts) {{ :osfamily => 'Debian', :lsbdistcodename => 'squeeze' }}
-    it 'does not include rabbitmq::repo::apt when manage_repos is false' do
-      should_not contain_class('rabbitmq::repo::apt')
-    end
-  end
-
   context 'on Redhat' do
     let(:facts) {{ :osfamily => 'RedHat' }}
     it 'includes rabbitmq::repo::rhel' do
@@ -60,7 +25,7 @@ describe 'rabbitmq' do
     end
   end
   
-  ['Debian', 'RedHat', 'SUSE', 'Archlinux'].each do |distro|
+  ['RedHat', 'SUSE'].each do |distro|
     context "on #{distro}" do
       let(:facts) {{
         :osfamily => distro,
@@ -408,64 +373,6 @@ describe 'rabbitmq' do
         'provider' => 'rpm',
         'source'   => 'http://www.rabbitmq.com/releases/rabbitmq-server/v3.2.3/rabbitmq-server-3.2.3-1.noarch.rpm'
       )
-    end
-  end
-
-  context "on Debian" do
-    let(:facts) {{ :osfamily => 'Debian', :lsbdistcodename => 'precise' }}
-    it 'installs the rabbitmq package' do
-      should contain_package('rabbitmq-server').with(
-        'ensure'   => 'installed',
-        'name'     => 'rabbitmq-server',
-        'provider' => 'apt'
-      )
-    end
-  end
-
-  context "on Archlinux" do
-    let(:facts) {{ :osfamily => 'Archlinux' }}
-    it 'installs the rabbitmq package' do
-      should contain_package('rabbitmq-server').with(
-        'ensure'   => 'installed',
-        'name'     => 'rabbitmq')
-    end
-  end
-
-  describe 'repo management on Debian' do
-    let(:facts)  {{ :osfamily => 'Debian' }}
-
-    context 'with no pin' do
-      let(:params) {{ :package_apt_pin => '' }}
-      describe 'it sets up an apt::source' do
-
-        it { should contain_apt__source('rabbitmq').with(
-          'location'    => 'http://www.rabbitmq.com/debian/',
-          'release'     => 'testing',
-          'repos'       => 'main',
-          'include_src' => false,
-          'key'         => '056E8E56'
-        ) }
-      end
-    end
-
-    context 'with pin' do
-      let(:params) {{ :package_apt_pin => '700' }}
-      describe 'it sets up an apt::source and pin' do
-
-        it { should contain_apt__source('rabbitmq').with(
-          'location'    => 'http://www.rabbitmq.com/debian/',
-          'release'     => 'testing',
-          'repos'       => 'main',
-          'include_src' => false,
-          'key'         => '056E8E56'
-        ) }
-
-        it { should contain_apt__pin('rabbitmq').with(
-          'packages' => 'rabbitmq-server',
-          'priority' => '700'
-        ) }
-
-      end
     end
   end
 

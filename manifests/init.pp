@@ -127,9 +127,9 @@ class rabbitmq(
     include '::rabbitmq::install::rabbitmqadmin'
 
     rabbitmq_plugin { 'rabbitmq_management':
-      ensure  => present,
-      require => Class['rabbitmq::install'],
-      notify  => Class['rabbitmq::service'],
+      ensure   => present,
+      require  => Class['rabbitmq::install'],
+      notify   => Class['rabbitmq::service'],
       provider => 'rabbitmqplugins'
     }
 

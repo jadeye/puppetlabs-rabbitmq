@@ -11,13 +11,6 @@ describe 'rabbitmq' do
   end
 
   context 'on Redhat' do
-    let(:facts) {{ :osfamily => 'RedHat' }}
-    it 'includes rabbitmq::repo::rhel' do
-      should contain_class('rabbitmq::repo::rhel')
-    end
-  end
-  
-  context 'on Redhat' do
     let(:params) {{ :manage_repos => false }}
     let(:facts) {{ :osfamily => 'RedHat' }}
     it 'does not include rabbitmq::repo::rhel when manage_repos is false' do
@@ -365,28 +358,12 @@ describe 'rabbitmq' do
   ##
   context "on RHEL" do
     let(:facts) {{ :osfamily => 'RedHat' }}
-    let(:params) {{ :package_source => 'http://www.rabbitmq.com/releases/rabbitmq-server/v3.2.3/rabbitmq-server-3.2.3-1.noarch.rpm' }}
     it 'installs the rabbitmq package' do
       should contain_package('rabbitmq-server').with(
         'ensure'   => 'installed',
         'name'     => 'rabbitmq-server',
-        'provider' => 'rpm',
-        'source'   => 'http://www.rabbitmq.com/releases/rabbitmq-server/v3.2.3/rabbitmq-server-3.2.3-1.noarch.rpm'
+        'provider' => 'yum',
       )
     end
   end
-
-  ['RedHat', 'SuSE'].each do |distro|
-    describe "repo management on #{distro}" do
-      describe 'imports the key' do
-        let(:facts) {{ :osfamily => distro }}
-        let(:params) {{ :package_gpg_key => 'http://www.rabbitmq.com/rabbitmq-signing-key-public.asc' }}
-
-        it { should contain_exec("rpm --import #{params[:package_gpg_key]}").with(
-          'path' => ['/bin','/usr/bin','/sbin','/usr/sbin']
-        ) }
-      end
-    end
-  end
-
 end

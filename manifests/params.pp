@@ -10,7 +10,7 @@ class rabbitmq::params {
       $package_name     = 'rabbitmq-server'
       $service_name     = 'rabbitmq-server'
       $package_provider = 'yum'
-      $version          = '3.2.3-1'
+      $version          = '3.3.5-1'
       $base_version     = regsubst($version,'^(.*)-\d$','\1')
     }
     default: {
